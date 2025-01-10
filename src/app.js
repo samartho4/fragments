@@ -17,6 +17,9 @@ const pino = require('pino-http')({
 
 // Create an express app instance we can use to attach middleware and HTTP routes
 const app = express();
+if (process.env.LOG_LEVEL === 'debug') {
+  logger.debug('Environment Variables:', process.env);
+}
 
 // Use pino logging middleware
 app.use(pino);
