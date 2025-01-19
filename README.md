@@ -133,3 +133,5 @@ Ensure headers include:
 - `Access-Control-Allow-Origin: *`
 
 ---
+## Author
+[Samarth Sharma](https://github.com/samartho4)
