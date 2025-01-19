@@ -15,10 +15,7 @@ const get = require('./get');
 router.use(authenticate()); // Apply middleware to all routes
 
 // Define our first route, which will be: GET /v1/fragments
-router.get('/fragments', (req, res) => {
-  res.status(200).json(get);
-});
-
+router.get('/fragments', require('./get'));
 // Other routes (POST, DELETE, etc.) will go here later on...
 
 module.exports = router;

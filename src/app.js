@@ -22,6 +22,10 @@ const app = express();
 if (process.env.LOG_LEVEL === 'debug') {
   logger.debug('Environment Variables:', process.env);
 }
+
+// Use CORS middleware so we can make requests across origins
+app.use(cors());
+
 // Use gzip/deflate compression middleware
 app.use(compression());
 
@@ -29,16 +33,13 @@ app.use(compression());
 passport.use(authenticate.strategy());
 app.use(passport.initialize());
 
-// Define our routes
-app.use('/', require('./routes'));
+
 // Use pino logging middleware
 app.use(pino);
 
 // Use helmetjs security middleware
 app.use(helmet());
 
-// Use CORS middleware so we can make requests across origins
-app.use(cors());
 
 // Use gzip/deflate compression middleware
 app.use(compression());

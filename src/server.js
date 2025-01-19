@@ -5,12 +5,15 @@ const stoppable = require('stoppable');
 
 // Get our logger instance
 const logger = require('./logger');
+const passport = require('passport');
 
 // Get our express app instance
 const app = require('./app');
+require('dotenv').config();
 
 // Get the desired port from the process' environment. Default to `8080`
 const port = parseInt(process.env.PORT || '8080', 10);
+app.use(passport.initialize());
 
 // Start a server listening on this port
 const server = stoppable(
