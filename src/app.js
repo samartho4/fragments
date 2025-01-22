@@ -10,6 +10,7 @@ const authenticate = require('./auth');
 // author and version from our package.json file
 // TODO: make sure you have updated your name in the `author` section
 const { author, version } = require('../package.json');
+console.log(author, version); // Verify if they are correctly loaded
 
 const logger = require('./logger');
 const pino = require('pino-http')({
@@ -41,8 +42,6 @@ app.use(pino);
 app.use(helmet());
 
 
-// Use gzip/deflate compression middleware
-app.use(compression());
 
 // modifications to src/app.js
 
