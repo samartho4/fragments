@@ -10,7 +10,9 @@ const { authenticate } = require('../../auth');
 const router = express.Router();
 
 // Import the get object
-const get = require('./get');
+
+//const get = require('./get');
+
 // Apply authentication middleware for all routes
 router.use(authenticate()); // Apply middleware to all routes
 
