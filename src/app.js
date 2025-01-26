@@ -1,3 +1,4 @@
+
 // src/app.js
 
 const express = require('express');
@@ -7,8 +8,9 @@ const compression = require('compression');
 const passport = require('passport');
 
 const authenticate = require('./auth');
+const { createErrorResponse } = require('./response'); // Import the function
+
 // author and version from our package.json file
-// TODO: make sure you have updated your name in the `author` section
 const { author, version } = require('../package.json');
 console.log(author, version); // Verify if they are correctly loaded
 
@@ -34,32 +36,18 @@ app.use(compression());
 passport.use(authenticate.strategy());
 app.use(passport.initialize());
 
-
 // Use pino logging middleware
 app.use(pino);
 
 // Use helmetjs security middleware
 app.use(helmet());
 
-
-
-// modifications to src/app.js
-
-// Remove `app.get('/', (req, res) => {...});` and replace with:
-
 // Define our routes
 app.use('/', require('./routes'));
 
-
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    error: {
-      message: 'not found',
-      code: 404,
-    },
-  });
+  res.status(404).json(createErrorResponse(404, 'not found')); // Use createErrorResponse
 });
 
 // Add error-handling middleware to deal with anything else
@@ -75,13 +63,7 @@ app.use((err, req, res, next) => {
     logger.error({ err }, `Error processing request`);
   }
 
-  res.status(status).json({
-    status: 'error',
-    error: {
-      message,
-      code: status,
-    },
-  });
+  res.status(status).json(createErrorResponse(status, message)); // Use createErrorResponse
 });
 
 // Export our `app` so we can access it in server.js
