@@ -10,7 +10,6 @@ const { version, author } = require('../../package.json');
 const router = express.Router();
 // Our authentication middleware
 const { authenticate } = require('../auth');
-const  createFragment  = require('./api/post'); // ✅ Import the function correctly
 
 /**
  * Expose all of our API routes on /v1/* to include an API version.
@@ -35,18 +34,6 @@ router.get('/', (req, res) => {
   };
   res.status(200).json(createSuccessResponse(data)); // Use createSuccessResponse
 });
-// ✅ Middleware to parse raw body
-const rawBody = () =>
-  express.raw({
-    inflate: true,
-    limit: '5mb',
-    type: (req) => {
-      const { type } = require('content-type').parse(req);
-      return require('../model/fragment').Fragment.isSupportedType(type);
-    },
-  });
-
-  router.post('/v1/fragments', authenticate(), rawBody(), createFragment); // ✅ Use function reference
 
 
 

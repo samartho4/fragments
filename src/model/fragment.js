@@ -162,13 +162,6 @@ class Fragment {
   static isSupportedType(value) {
     const supportedTypes = [
       'text/plain',
-      'text/markdown',
-      'text/html',
-      'application/json',
-      'image/png',
-      'image/jpeg',
-      'image/webp',
-      'image/gif',
     ];
 
     const { type } = contentType.parse(value);
