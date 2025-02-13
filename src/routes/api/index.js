@@ -6,6 +6,7 @@
 const express = require('express');
 const { authenticate } = require('../../auth');
 
+
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
@@ -21,7 +22,17 @@ router.get('/fragments', require('./get'));
 // Other routes (POST, DELETE, etc.) will go here later on...
 // POST /v1/fragments
 // Creates a new fragment for the authenticated user
-router.post('/fragments',require('./post'));
+const rawBody = () =>
+    express.raw({
+      inflate: true,
+      limit: '5mb',
+      type: (req) => {
+        const parsed = require('content-type').parse(req.headers['content-type']);
+        // Check against supported types without parameters
+        return require('../../model/fragment').Fragment.isSupportedType(parsed.type);
+      },
+    });
+router.post('/fragments',rawBody(),require('./post'));
 // Other routes (POST, DELETE, etc.) will g
 
 module.exports = router;
