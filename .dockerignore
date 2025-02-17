@@ -3,7 +3,7 @@
 coverage/
 node_modules/
 tests/
-!tests/.htpasswd  # Un-ignore this file, as it's required at runtime
+!tests/.htpasswd  
 .env
 eslint.config.mjs
 .git/
