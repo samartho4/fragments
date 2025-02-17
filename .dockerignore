@@ -1,0 +1,13 @@
+.github/
+.vscode/
+coverage/
+node_modules/
+tests/
+!tests/.htpasswd  # Un-ignore this file, as it's required at runtime
+.env
+eslint.config.mjs
+.git/
+.gitignore
+.prettier*
+jest*
+
