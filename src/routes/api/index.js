@@ -6,12 +6,10 @@
 const express = require('express');
 const { authenticate } = require('../../auth');
 
-
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
 // Import the get object
-
 //const get = require('./get');
 
 // Apply authentication middleware for all routes
@@ -34,5 +32,6 @@ const rawBody = () =>
     });
 router.post('/fragments',rawBody(),require('./post'));
 // Other routes (POST, DELETE, etc.) will g
+router.get('/fragments/:id', require('./getById'));
 
 module.exports = router;
