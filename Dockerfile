@@ -15,7 +15,7 @@ RUN npm ci --only=production
 # ==================== Stage 1: Run the node server ====================
 
 # Using a smaller (alpine) version of node after the dependencies are installed
-FROM node:22.14.0-alpine3.21@sha256:d24894fdfdfb3a7633c56883c42c780a7eb03f741c58467020d331786fb48bb7 AS production
+FROM node:22.14.0-alpine3.21@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad07487d24d1aa386336d1944 AS production
 
 # Metadata
 LABEL maintainer="Samarth <samarthx04@gmail.com>>"\
