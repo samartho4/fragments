@@ -3,7 +3,7 @@ FROM node:22.14.0 AS dependencies
 
 # Metadata
 LABEL maintainer="Samarth <samarthx04@gmail.com>"
-LABEL description="Fragments UI microservice"
+LABEL description="Fragments microservice"
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -23,9 +23,9 @@ RUN npm ci --only=production
 FROM node:22.14.0-alpine3.21@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad07487d24d1aa386336d1944 AS production
 
 
-
 # Install dependencies for healthcheck and debugging
-RUN apk add --no-cache curl dumb-init
+RUN apk add --no-cache curl=8.12.1-r1 dumb-init=1.2.5-r3
+
 
 # Set working directory
 WORKDIR /app
