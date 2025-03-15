@@ -26,6 +26,8 @@ router.get('/', (req, res) => {
   // Client's shouldn't cache this response (always request it fresh)
   res.setHeader('Cache-Control', 'no-cache');
 
+
+
   // Create a success response with the required data
   const data = {
     author,
@@ -38,7 +40,6 @@ router.get('/', (req, res) => {
 
 
 module.exports = router;
-
 
 
 
