@@ -22,13 +22,15 @@ RUN npm ci --only=production
 # ==================== Stage 2: Production ====================
 FROM node:22.14.0-alpine3.21@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad07487d24d1aa386336d1944 AS production
 
+
 # Install dependencies for healthcheck and debugging
-# Update package index first
-RUN apk update && \
-    # Install with available versions in Alpine 3.21
-    apk add --no-cache \
-    curl~=8.0 \
-    dumb-init~=1.2
+# Install dependencies for healthcheck and debugging
+# Using compatible versions available in Alpine 3.21
+RUN apk add --no-cache \
+    curl \
+    dumb-init
+
+
 
 # Set working directory
 WORKDIR /app
@@ -55,7 +57,7 @@ USER appuser
 
 # Expose application port
 EXPOSE 8080
-ENV PORT 8080
+ENV PORT=8080
 
 # Healthcheck using curl
 HEALTHCHECK --interval=30s --timeout=10s CMD curl -f http://localhost:8080/ || exit 1
