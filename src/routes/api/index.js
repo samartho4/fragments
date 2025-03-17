@@ -33,5 +33,9 @@ const rawBody = () =>
 router.post('/fragments',rawBody(),require('./post'));
 // Other routes (POST, DELETE, etc.) will g
 router.get('/fragments/:id', require('./getById'));
+// GET /v1/fragments/:id/info
+router.get('/fragments/:id/info', require('./getFragmentInfo'));
+// GET /v1/fragments/:id.:ext (with extension for conversion)
+router.get('/fragments/:id.:ext', require('./getByIdExt'));
 
 module.exports = router;
