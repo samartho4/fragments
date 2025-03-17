@@ -72,11 +72,11 @@ function extToContentType(ext) {
     'html': 'text/html',
     'md': 'text/markdown',
     'json': 'application/json',
-    'png': 'image/png',
+    /*'png': 'image/png',
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
     'webp': 'image/webp',
-    'gif': 'image/gif'
+    'gif': 'image/gif'*/
   };
   
   return extMap[ext] || `application/${ext}`;
