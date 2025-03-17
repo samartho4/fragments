@@ -145,10 +145,10 @@ class Fragment {
       'text/markdown': ['text/plain', 'text/markdown', 'text/html'],
       'text/html': ['text/plain', 'text/html'],
       'application/json': ['application/json', 'text/plain'],
-      'image/png': ['image/png'],
+      /*'image/png': ['image/png'],
       'image/jpeg': ['image/jpeg'],
       'image/webp': ['image/webp'],
-      'image/gif': ['image/gif'],
+      'image/gif': ['image/gif'],*/
     };
 
     return supportedFormats[this.mimeType] || [];
@@ -166,10 +166,10 @@ class Fragment {
       'text/markdown',
       'text/html',
       'application/json',
-      'image/png',
+      /*'image/png',
       'image/jpeg',
       'image/webp',
-      'image/gif'
+      'image/gif'*/
     ];
     const { type } = contentType.parse(value);
     return supportedTypes.includes(type);
