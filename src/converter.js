@@ -19,12 +19,12 @@ function convert(data, sourceType, targetType) {
 
   // Handle text/markdown to text/html conversion
   if (sourceType === 'text/markdown' && targetType === 'text/html') {
-    return convertToHtml(data);
+    return convertMarkdownToHtml(data);
   }
 
   // Handle text/plain to text/html conversion
   if (sourceType === 'text/plain' && targetType === 'text/html') {
-    return Buffer.from(`<pre>${data.toString()}</pre>`);
+    return Buffer.from(`<html><body><pre>${data.toString()}</pre></body></html>`);
   }
 
   // Handle text/* to text/plain conversion
@@ -46,11 +46,11 @@ function convert(data, sourceType, targetType) {
  * @param {Buffer} data - the markdown content as a Buffer
  * @returns {Buffer} - HTML content as a Buffer
  */
-function convertToHtml(data) {
+function convertMarkdownToHtml(data) {
   // Very simple markdown conversion, just handle headings and paragraphs for now
   const markdown = data.toString();
   const lines = markdown.split('\n');
-  let html = '';
+  let html = '<html><body>\n';
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -62,13 +62,14 @@ function convertToHtml(data) {
       html += `<h3>${line.slice(4)}</h3>\n`;
     } else if (line.length > 0) {
       html += `<p>${line}</p>\n`;
-    } else {
+    } else if (i < lines.length - 1 && lines[i+1].trim().length > 0) {
       html += '\n';
     }
   }
 
+  html += '</body></html>';
   return Buffer.from(html);
 }
 
 module.exports.convert = convert;
-module.exports.convertToHtml = convertToHtml;
+module.exports.convertMarkdownToHtml = convertMarkdownToHtml;
