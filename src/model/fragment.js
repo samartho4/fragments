@@ -1,3 +1,7 @@
+
+
+// src/model/fragment.js
+
 // Use crypto.randomUUID() to create unique IDs
 const { randomUUID } = require('crypto');
 // Use content-type to parse Content-Type headers
@@ -140,8 +144,9 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
+    // Define which source types can be converted to which target types
     const supportedFormats = {
-      'text/plain': ['text/plain'],
+      'text/plain': ['text/plain', 'text/html'],
       'text/markdown': ['text/plain', 'text/markdown', 'text/html'],
       'text/html': ['text/plain', 'text/html'],
       'application/json': ['application/json', 'text/plain'],
@@ -150,8 +155,10 @@ class Fragment {
       'image/webp': ['image/webp'],
       'image/gif': ['image/gif'],*/
     };
-
-    return supportedFormats[this.mimeType] || [];
+  
+    // Return the supported formats for this fragment's mime type
+    // If none are defined, return an array with just the fragment's own type
+    return supportedFormats[this.mimeType] || [this.mimeType];
   }
 
   /**
@@ -166,10 +173,10 @@ class Fragment {
       'text/markdown',
       'text/html',
       'application/json',
-      /*'image/png',
+      'image/png',
       'image/jpeg',
       'image/webp',
-      'image/gif'*/
+      'image/gif'
     ];
     const { type } = contentType.parse(value);
     return supportedTypes.includes(type);
