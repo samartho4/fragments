@@ -47,7 +47,7 @@ function convert(data, sourceType, targetType) {
  * @returns {Buffer} - HTML content as a Buffer
  */
 function convertMarkdownToHtml(data) {
-  // Very simple markdown conversion, just handle headings and paragraphs for now
+  // Simple markdown conversion, handling headings, paragraphs, and basic formatting
   const markdown = data.toString();
   const lines = markdown.split('\n');
   let html = '<html><body>\n';
