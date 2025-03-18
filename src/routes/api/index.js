@@ -9,17 +9,13 @@ const { authenticate } = require('../../auth');
 // Create a router on which to mount our API endpoints
 const router = express.Router();
 
-// Import the get object
-//const get = require('./get');
-
 // Apply authentication middleware for all routes
 router.use(authenticate()); // Apply middleware to all routes
 
-// Define our first route, which will be: GET /v1/fragments
-router.get('/fragments', require('./get'));
-// Other routes (POST, DELETE, etc.) will go here later on...
-// POST /v1/fragments
-// Creates a new fragment for the authenticated user
+// Define route for GET /v1/fragments
+router.get('/fragments', require('./get').getFragmentsList);
+
+// Define route for POST /v1/fragments
 const rawBody = () =>
     express.raw({
       inflate: true,
@@ -30,12 +26,18 @@ const rawBody = () =>
         return require('../../model/fragment').Fragment.isSupportedType(parsed.type);
       },
     });
-router.post('/fragments',rawBody(),require('./post'));
-// Other routes (POST, DELETE, etc.) will g
-router.get('/fragments/:id', require('./getById'));
-// GET /v1/fragments/:id/info
+router.post('/fragments', rawBody(), require('./post'));
+
+// IMPORTANT - Order matters for route definitions!
+// Routes with more specific patterns must come before less specific ones
+
+// GET /v1/fragments/:id/info route must come before the generic ID route
 router.get('/fragments/:id/info', require('./getFragmentInfo'));
-// GET /v1/fragments/:id.:ext (with extension for conversion)
+
+// GET /v1/fragments/:id.:ext route for conversion
 router.get('/fragments/:id.:ext', require('./getByIdExt'));
+
+// GET /v1/fragments/:id route comes last
+router.get('/fragments/:id', require('./getById'));
 
 module.exports = router;
