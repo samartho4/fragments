@@ -5,16 +5,15 @@ const { createErrorResponse } = require('../../response');
 const { convert } = require('../../converter');
 
 /**
- * GET /fragments/:id with optional extension
+ * GET /fragments/:id.:ext
  *
  * Retrieves a single fragment's data for the current user by its id,
- * optionally converting to a different format using extension.
+ * and converts it to the requested format specified by the extension.
  */
 module.exports = async (req, res) => {
-  const { id } = req.params;
-  const ext = req.params.ext;
+  const { id, ext } = req.params;
   
-  logger.debug(`GET /fragments/${id}${ext ? `.${ext}` : ''} (user: ${req.user})`);
+  logger.debug(`GET /fragments/${id}.${ext} (user: ${req.user})`);
 
   try {
     // Attempt to look up the fragment metadata for this user
@@ -23,17 +22,12 @@ module.exports = async (req, res) => {
     // Get the raw fragment data
     const data = await fragment.getData();
 
-    // If there's no extension, return the raw data with the original Content-Type
-    if (!ext) {
-      res.set('Content-Type', fragment.type);
-      res.set('Content-Length', data.length);
-      return res.status(200).send(data);
-    }
-
-    // If we have an extension, we need to convert the data
+    // Convert the extension to a proper mime type
     const targetType = extToContentType(ext);
     
-    // Check if this conversion is supported
+    logger.debug(`Converting from ${fragment.mimeType} to ${targetType}`);
+    
+    // Check if this conversion is supported by looking at the fragment's available formats
     if (!fragment.formats.includes(targetType)) {
       logger.warn(`Unsupported conversion from ${fragment.type} to ${targetType}`);
       return res.status(415).json(
@@ -42,12 +36,19 @@ module.exports = async (req, res) => {
     }
 
     // Convert the data to the requested type
-    const convertedData = convert(data, fragment.mimeType, targetType);
-    
-    // Return the converted data with appropriate Content-Type
-    res.set('Content-Type', targetType);
-    res.set('Content-Length', convertedData.length);
-    return res.status(200).send(convertedData);
+    try {
+      const convertedData = convert(data, fragment.mimeType, targetType);
+      
+      // Return the converted data with appropriate Content-Type
+      res.set('Content-Type', targetType);
+      res.set('Content-Length', convertedData.length);
+      return res.status(200).send(convertedData);
+    } catch (conversionError) {
+      logger.error({ err: conversionError }, 'Error converting fragment');
+      return res.status(500).json(
+        createErrorResponse(500, `Error converting fragment: ${conversionError.message}`)
+      );
+    }
     
   } catch (err) {
     logger.error({ err }, 'Error processing fragment request');
@@ -72,12 +73,8 @@ function extToContentType(ext) {
     'html': 'text/html',
     'md': 'text/markdown',
     'json': 'application/json',
-    /*'png': 'image/png',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'webp': 'image/webp',
-    'gif': 'image/gif'*/
+    // Can add more mappings as needed
   };
   
-  return extMap[ext] || `application/${ext}`;
+  return extMap[ext.toLowerCase()] || `application/${ext}`;
 }
