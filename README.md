@@ -1,137 +1,171 @@
-# Fragments Back-End API
+# Fragments API
+
+A microservice for storing, retrieving, and transforming content fragments. The Fragments API allows users to store and manage text and binary content in various formats, with built-in transformation capabilities.
 
 ## Overview
-This project is a Node.js-based REST API using Express, focused on backend microservices. The lab setup involves:
 
-- Setting up development tools and environment.
-- Creating and managing a GitHub repository.
-- Configuring ESLint, Prettier, and structured logging.
-- Building an initial API server with logging and debugging tools.
+This project provides a RESTful API for managing content fragments with the following features:
 
----
+- Create, read, and delete content fragments
+- Authentication support using HTTP Basic Auth or AWS Cognito
+- Support for various content types (text/plain, text/markdown, text/html, application/json, etc.)
+- Format conversion between supported content types
+- Comprehensive test suite and CI/CD integrations
 
-## Getting Started
+## Setup and Installation
 
 ### Prerequisites
-Ensure the following tools are installed and properly configured:
 
-- **Node.js**: Install the latest LTS version.
-- **VSCode**: Install the following extensions:
-  - ESLint
-  - Prettier - Code Formatter
-  - Code Spell Checker
-- **git CLI**
-- **curl**: Use `curl.exe` instead of `curl` in PowerShell on Windows to avoid alias conflicts.
-- **jq**: For JSON formatting in the terminal.
-- **WSL2** (Windows users): For Unix tools support.
+Before running the application, make sure you have:
 
----
+- Node.js (LTS version recommended)
+- npm or yarn
+- Docker (optional, for containerized deployment)
 
-## Scripts
-The following scripts are defined in `package.json`:
+### Installation
 
-### `lint`
-Runs ESLint to check for code issues.
-```bash
-npm run lint
-```
-Ensure this script runs without errors before proceeding.
+1. Clone the repository:
+  ```bash
+  git clone https://github.com/samartho4/fragments.git
+  cd fragments
 
-### `start`
-Starts the server in normal mode.
-```bash
+**
+
+Install dependencies:
+bashCopynpm install
+
+Create a .env file for local development:
+bashCopy# HTTP Port (defaults to 8080)
+PORT=8080
+
+# Log level (debug, info, warn, error)
+LOG_LEVEL=info
+
+# Authentication options - choose one:
+
+# Option 1: HTTP Basic Auth
+HTPASSWD_FILE=tests/.htpasswd
+
+# Option 2: AWS Cognito (for production)
+# AWS_COGNITO_POOL_ID=your-cognito-pool-id
+# AWS_COGNITO_CLIENT_ID=your-cognito-client-id
+
+
+Usage
+Running the Application
+Start the server in different modes:
+bashCopy# Production mode
 npm start
-```
-Server will be available at [http://localhost:8080](http://localhost:8080).
 
-### `dev`
-Starts the server in development mode with `nodemon`.
-```bash
+# Development mode (with automatic restart on file changes)
 npm run dev
-```
-Automatically restarts the server upon file changes. Logs will be in debug mode.
 
-### `debug`
-Starts the server in debug mode with `nodemon` and the Node.js inspector.
-```bash
+# Debug mode (with inspector)
 npm run debug
-```
-Allows attaching a debugger (e.g., in VSCode).
+API Endpoints
+Authentication
+All API endpoints are protected and require authentication.
+Base URL
+By default, the API is available at http://localhost:8080
+Health Check
 
----
+GET /: Returns basic information about the service.
 
-## Debugging
+Fragments API (v1)
 
-### VSCode Setup
-To debug with VSCode:
+GET /v1/fragments: Lists all fragments for the current user.
+POST /v1/fragments: Creates a new fragment.
+GET /v1/fragments/:id: Retrieves a fragment by ID.
+GET /v1/fragments/:id/info: Retrieves metadata about a fragment.
+GET /v1/fragments/:id.:ext: Retrieves a fragment in a converted format specified by the extension.
 
-1. Add the following to `.vscode/launch.json`:
-   ```json
-   {
-     "version": "0.2.0",
-     "configurations": [
-       {
-         "name": "Debug via npm run debug",
-         "request": "launch",
-         "cwd": "${workspaceFolder}",
-         "runtimeExecutable": "npm",
-         "runtimeArgs": ["run-script", "debug"],
-         "skipFiles": ["<node_internals>/**"],
-         "type": "node"
-       }
-     ]
-   }
-   ```
-2. Set a breakpoint in `src/app.js` (e.g., `res.status(200).json({`).
-3. Start debugging by selecting `Debug via npm run debug` in the debugger menu.
-4. Use `curl` or a browser to access [http://localhost:8080](http://localhost:8080).
+Working with Fragments
+Creating a Fragment
+bashCopycurl -X POST \
+  -H "Content-Type: text/plain" \
+  -d "This is a plain text fragment" \
+  -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments
+Listing Fragments
+bashCopy# Get list of IDs
+curl -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments
 
-### LOG_LEVEL=debug
-When running with `LOG_LEVEL=debug`, environment variables will be printed for debugging. Modify `src/logger.js` as follows:
+# Get expanded fragment data
+curl -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments?expand=1
+Getting a Fragment
+bashCopycurl -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments/{id}
+Getting Fragment Metadata
+bashCopycurl -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments/{id}/info
+Converting a Fragment
+bashCopy# Convert markdown to HTML
+curl -u "user1@email.com:password1" \
+  http://localhost:8080/v1/fragments/{id}.html
+Development
+Code Structure
+The project is organized as follows:
 
-```javascript
-if (process.env.LOG_LEVEL === 'debug') {
-  console.log('Environment Variables:', process.env);
-}
-```
-Start the server with:
-```bash
-LOG_LEVEL=debug npm run dev
-```
-Ensure sensitive data is not exposed unless in debugging mode.
+src/: Main source code
 
----
+app.js: Express application setup
+server.js: HTTP server configuration
+auth/: Authentication modules
+model/: Data models and storage implementations
+routes/: API routes and handlers
+utils/: Utility functions
 
-## Testing API Server
 
-### Browser Access
-- Navigate to [http://localhost:8080](http://localhost:8080) to test the server.
-- The JSON response should include `status`, `author`, `githubUrl`, and `version`.
+tests/: Test suite
 
-### curl Access
-Run the following command:
-```bash
-curl -s localhost:8080 | jq
-```
-Output:
-```json
-{
-  "status": "ok",
-  "author": "Your Name",
-  "githubUrl": "https://github.com/YOUR_GITHUB_USERNAME/fragments",
-  "version": "0.0.1"
-}
-```
+unit/: Unit tests
+.htpasswd: Test user credentials for Basic Auth
 
-### HTTP Headers
-Check headers with:
-```bash
-curl -i localhost:8080
-```
-Ensure headers include:
-- `Cache-Control: no-cache`
-- `Access-Control-Allow-Origin: *`
 
----
-## Author
-[Samarth Sharma](https://github.com/samartho4)
+
+Available Scripts
+
+npm start: Start the server in production mode
+npm run dev: Start the server in development mode with auto-reload
+npm run debug: Start the server in debug mode
+npm test: Run tests
+npm run test:watch: Run tests in watch mode
+npm run coverage: Run tests with coverage report
+npm run lint: Run ESLint checks
+
+Docker Support
+The project includes Docker configuration for containerized deployment:
+bashCopy# Build the Docker image
+docker build -t fragments .
+
+# Run the container
+docker run -p 8080:8080 --env-file .env fragments
+Continuous Integration/Deployment
+This project uses GitHub Actions for CI/CD:
+
+Continuous Integration: Runs tests, linting, and security checks on every pull request
+Continuous Deployment: Builds and pushes Docker images to Docker Hub and AWS ECR when tags are created
+
+Supported Content Types
+
+text/plain: Plain text fragments
+text/markdown: Markdown fragments (can be converted to HTML)
+text/html: HTML fragments
+application/json: JSON fragments
+Image types (planned): PNG, JPEG, WebP, GIF
+
+Conversions
+The following conversions are supported:
+
+text/plain → text/html
+text/markdown → text/html, text/plain
+text/html → text/plain
+application/json → text/plain
+
+License
+This project is licensed under the UNLICENSED license.
+Author
+Samarth Sharma
+**
