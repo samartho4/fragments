@@ -25,10 +25,9 @@ FROM node:22.14.0-alpine3.21@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad074
 
 # Install dependencies for healthcheck and debugging
 # Install dependencies for healthcheck and debugging
-# Using exact versions available in Alpine 3.21
 RUN apk add --no-cache \
-    curl=8.12.1-r0 \
-    dumb-init=1.2.5-r3
+    curl \
+    dumb-init
 
 
 
