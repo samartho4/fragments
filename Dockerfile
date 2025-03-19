@@ -25,6 +25,7 @@ FROM node:22.14.0-alpine3.21@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad074
 
 # Install dependencies for healthcheck and debugging
 # Install dependencies for healthcheck and debugging
+# hadolint ignore=DL3018
 RUN apk add --no-cache \
     curl \
     dumb-init
