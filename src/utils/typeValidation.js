@@ -28,8 +28,8 @@ module.exports.validateFragment = async (fragmentData, fragmentType) => {
       // Throw an Error if the program is unable to parse the image
       await validateImage(fragmentData, fragmentType);
       break;
-    }
-  }*/
+    }*/
+  }
 };
 
 const validateJson = (fragmentData) => {
@@ -50,6 +50,9 @@ const validateYaml = (fragmentData) => {
   }
 };
 
+
+// changed this only 
+
 function validateText(fragmentData) {
   logger.debug('Validating text data');
   if (!Buffer.isBuffer(fragmentData)) {
@@ -58,6 +61,8 @@ function validateText(fragmentData) {
   }
   return true;
 }
+
+
 
 /*const validateImage = async (fragmentData, expectedType) => {
   try {
@@ -84,4 +89,3 @@ function validateText(fragmentData) {
     logger.error(`Invalid image data, ${error.message}`);
     throw new Error(`Invalid image data, ${error.message}`);
   }*/
-};
