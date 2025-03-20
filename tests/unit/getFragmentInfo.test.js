@@ -30,6 +30,7 @@ describe('GET /v1/fragments/:id/info', () => {
       .get('/v1/fragments/someid/info')
       .auth('invalid@email.com', 'incorrect_password')
       .expect(401));
+      
+      
+    });   
 
-  
-});
