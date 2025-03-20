@@ -10,7 +10,7 @@ async function getFragmentsList(req, res) {
   try {
     // Fetch the expanded list of objects if the user opts for it
     if (req.query.expand === '1') {
-      logger.info('Fetching all the expanded fragments for user');
+      /*logger.info('Fetching all the expanded fragments for user');
       const fragments = await Fragment.byUser(req.user, true);
       logger.info('List of expanded fragments fetched successfully');
 
@@ -18,7 +18,7 @@ async function getFragmentsList(req, res) {
         createSuccessResponse({
           fragments: fragments,
         })
-      );
+      );*/
     } else {
       logger.info('Fetching list of fragment IDs for user');
       // Otherwise, send the array of fragment IDs to the user

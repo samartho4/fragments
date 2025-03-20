@@ -66,6 +66,7 @@ module.exports = async (req, res) => {
  * @param {string} ext - file extension (e.g., 'txt', 'html', 'md')
  * @returns {string} corresponding Content-Type
  */
+
 function extToContentType(ext) {
   const extMap = {
     'txt': 'text/plain',
