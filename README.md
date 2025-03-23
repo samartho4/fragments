@@ -21,3 +21,12 @@ Before running the application, make sure you have:
 - Node.js (LTS version recommended)
 - npm or yarn
 - Docker (optional, for containerized deployment)
+
+- [Fragments_Microservice](https://github.com/samartho4/fragments/blob/main/Docs/Fragments_Microservice)
+- [Automation](https://github.com/samartho4/fragments/blob/main/Docs/Automation)
+- [configuring_aws.md](https://github.com/samartho4/fragments/blob/main/Docs/configuring_aws.md)
+- [create_api_locally.md](https://github.com/samartho4/fragments/blob/main/Docs/create_api_locally.md)
+- [test_curl.md](https://github.com/samartho4/fragments/blob/main/Docs/test_curl.md)
+- [new_test](https://github.com/samartho4/fragments/blob/main/Docs/new_test)
+- [test_curl](https://github.com/samartho4/fragments/blob/main/Docs/test_curl)
+
