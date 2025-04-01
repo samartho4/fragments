@@ -40,4 +40,7 @@ router.get('/fragments/:id.:ext', require('./getByIdExt'));
 // GET /v1/fragments/:id route comes last
 router.get('/fragments/:id', require('./getById'));
 
+// DELETE /v1/fragments/:id route for deleting fragments
+router.delete('/fragments/:id', require('./delete'));
+
 module.exports = router;
