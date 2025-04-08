@@ -19,7 +19,7 @@ if (
   
   // Prefer Amazon Cognito (production)
   if (process.env.AWS_COGNITO_POOL_ID && process.env.AWS_COGNITO_CLIENT_ID) {
-    logger.info("using cin=gnito for the suth")
+    logger.info("using cognito for the auth")
     module.exports = require('./cognito');
   }
   // Also allow for an .htpasswd file to be used, but not in production
