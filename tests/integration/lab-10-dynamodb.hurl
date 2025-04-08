@@ -8,7 +8,7 @@ user1@email.com:password1
 
 { "service": "DynamoDB" }
 
-HTTP/1.1 201
+HTTP/1.1 401
 [Captures]
 fragment1_url: header "Location"
 fragment1_id: jsonpath "$.fragment.id"
