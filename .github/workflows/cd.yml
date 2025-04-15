@@ -60,7 +60,7 @@ jobs:
             AWS_REGION=us-east-1
 
       # Deploy to ECS Fargate
-      - name: Deploy to ECS Fargate
+      - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.update-task-def.outputs.task-definition }}
