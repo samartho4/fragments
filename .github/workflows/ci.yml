@@ -70,75 +70,75 @@ jobs:
       - name: Install node dependencies and run Tests
         run: npm ci && npm test
 
-        integration-tests:
-          name: Integration Tests
-          runs-on: ubuntu-latest
-          steps:
-            - name: Check out code
-              uses: actions/checkout@v4
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install node dependencies
+        run: npm ci
+
+      # Install Sharp for image processing
+      - name: Install Sharp
+        run: npm install sharp
+
+      # Start LocalStack and DynamoDB Local using docker compose v2
+      - name: Start LocalStack and DynamoDB Local
+        run: docker compose up -d dynamodb-local localstack
       
-            - name: Setup node
-              uses: actions/setup-node@v4
-              with:
-                node-version: 'lts/*'
-                cache: 'npm'
+      # Wait for services to initialize
+      - name: Wait for services to initialize
+        run: sleep 10
       
-            - name: Install node dependencies
-              run: npm ci
-      
-            # Install Sharp for image processing
-            - name: Install Sharp
-              run: npm install sharp
-      
-            # Start LocalStack and DynamoDB Local using docker compose v2
-            - name: Start LocalStack and DynamoDB Local
-              run: docker compose up -d dynamodb-local localstack
-            
-            # Wait for services to initialize
-            - name: Wait for services to initialize
-              run: sleep 10
-            
-            # Make setup script executable and run it
-            - name: Set up AWS resources
-              run: |
-                chmod +x ./scripts/local-aws-setup.sh
-                ./scripts/local-aws-setup.sh
-              env:
-                AWS_ACCESS_KEY_ID: test
-                AWS_SECRET_ACCESS_KEY: test
-                AWS_SESSION_TOKEN: test
-                AWS_REGION: us-east-1
-      
-            # Start the Fragments service in the background
-            - name: Start Fragments service
-              run: |
-                npm start &
-                sleep 5  # Wait for the service to start
-              env:
-                PORT: 8080
-                API_URL: http://localhost:8080
-                AWS_REGION: us-east-1
-                AWS_ACCESS_KEY_ID: test
-                AWS_SECRET_ACCESS_KEY: test
-                AWS_SESSION_TOKEN: test
-                AWS_S3_ENDPOINT_URL: http://localhost:4566
-                AWS_S3_BUCKET_NAME: fragments
-                AWS_DYNAMODB_ENDPOINT_URL: http://localhost:8000
-                AWS_DYNAMODB_TABLE_NAME: fragments
-                HTPASSWD_FILE: tests/.htpasswd
-                NODE_ENV: development
-                LOG_LEVEL: info
-      
-            # Run the integration tests
-            - name: Run integration tests
-              run: npm run test:integration
-              env:
-                # These env vars are likely unnecessary since we're not spawning a new process,
-                # but including them for completeness
-                AWS_REGION: us-east-1
-                AWS_ACCESS_KEY_ID: test
-                AWS_SECRET_ACCESS_KEY: test
-                AWS_SESSION_TOKEN: test    
+      # Make setup script executable and run it
+      - name: Set up AWS resources
+        run: |
+          chmod +x ./scripts/local-aws-setup.sh
+          ./scripts/local-aws-setup.sh
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_SESSION_TOKEN: test
+          AWS_REGION: us-east-1
+
+      # Start the Fragments service in the background
+      - name: Start Fragments service
+        run: |
+          npm start &
+          sleep 5  # Wait for the service to start
+        env:
+          PORT: 8080
+          API_URL: http://localhost:8080
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_SESSION_TOKEN: test
+          AWS_S3_ENDPOINT_URL: http://localhost:4566
+          AWS_S3_BUCKET_NAME: fragments
+          AWS_DYNAMODB_ENDPOINT_URL: http://localhost:8000
+          AWS_DYNAMODB_TABLE_NAME: fragments
+          HTPASSWD_FILE: tests/.htpasswd
+          NODE_ENV: development
+          LOG_LEVEL: info
+
+      # Run the integration tests
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          # These env vars are likely unnecessary since we're not spawning a new process,
+          # but including them for completeness
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_SESSION_TOKEN: test    
 
   docker-hub:
     name: Build and Push to Docker Hub
