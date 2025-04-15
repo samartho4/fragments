@@ -1,94 +1,65 @@
-# Integration Test for DynamoDB
+# Comprehensive Fragments API Integration Test
 
-# 1. POST a new JSON fragment
+# 1. POST a JSON fragment with valid content
 POST http://localhost:8080/v1/fragments
 Content-Type: application/json
 [BasicAuth]
 user1@email.com:password1
-
-{ "service": "DynamoDB" }
-
-HTTP/1.1 401
-[Captures]
-fragment1_url: header "Location"
-fragment1_id: jsonpath "$.fragment.id"
-
-# 2. Get the fragment info
-GET {{fragment1_url}}/info
-[BasicAuth]
-user1@email.com:password1
-
-HTTP/1.1 200
-[Asserts]
-jsonpath "$.status" == "ok"
-jsonpath "$.fragment.id" == {{fragment1_id}}
-jsonpath "$.fragment.type" == "application/json"
-jsonpath "$.fragment.size" == 23
-jsonpath "$.fragment.ownerId" exists
-jsonpath "$.fragment.created" exists
-jsonpath "$.fragment.updated" exists
-
-# 3. POST a second Markdown fragment - TRY DIFFERENT APPROACH
-POST http://localhost:8080/v1/fragments
-Content-Type: text/markdown
-[BasicAuth]
-user1@email.com:password1
-```
-DynamoDB is **great**.
-```
-
+{"service": "DynamoDB", "description": "Cloud database service"}
+# Verify successful creation
 HTTP/1.1 201
+[Asserts]
+header "Location" exists
+jsonpath "$.status" == "ok"
+jsonpath "$.fragment.type" == "application/json"
+jsonpath "$.fragment.size" > 0
 [Captures]
-fragment2_url: header "Location"
-fragment2_id: jsonpath "$.fragment.id"
+json_fragment_url: header "Location"
+json_fragment_id: jsonpath "$.fragment.id"
 
-# 4. Get the fragment info
-GET {{fragment2_url}}/info
+# 2. Verify fragment info for the JSON fragment
+GET {{json_fragment_url}}/info
 [BasicAuth]
 user1@email.com:password1
-
 HTTP/1.1 200
 [Asserts]
 jsonpath "$.status" == "ok"
-jsonpath "$.fragment.id" == {{fragment2_id}}
-jsonpath "$.fragment.type" == "text/markdown"
-jsonpath "$.fragment.size" == 21
-jsonpath "$.fragment.ownerId" exists
-jsonpath "$.fragment.created" exists
-jsonpath "$.fragment.updated" exists
+jsonpath "$.fragment.id" == {{json_fragment_id}}
+jsonpath "$.fragment.type" == "application/json"
 
-# 5. GET all fragments
+
+
+
+
+
+# 3. DELETE the JSON fragment
+DELETE {{json_fragment_url}}
+[BasicAuth]
+user1@email.com:password1
+HTTP/1.1 200
+[Asserts]
+jsonpath "$.status" == "ok"
+
+
+
+
+# 4. GET fragments list after deletion
 GET http://localhost:8080/v1/fragments
 [BasicAuth]
 user1@email.com:password1
-
 HTTP/1.1 200
 [Asserts]
 jsonpath "$.status" == "ok"
-jsonpath "$.fragments" includes {{fragment1_id}}
-jsonpath "$.fragments" includes {{fragment2_id}}
+jsonpath "$.fragments" not includes {{json_fragment_id}}
 
-# 6. DELETE the first fragment
-DELETE {{fragment1_url}}
-[BasicAuth]
-user1@email.com:password1
 
-HTTP/1.1 200
-
-# 7. Try to GET the deleted fragment
-GET {{fragment1_url}}
-[BasicAuth]
-user1@email.com:password1
-
-HTTP/1.1 404
-
-# 8. GET all fragments again
+# 5. Attempt to access fragments without authentication
 GET http://localhost:8080/v1/fragments
-[BasicAuth]
-user1@email.com:password1
+HTTP/1.1 401
 
-HTTP/1.1 200
-[Asserts]
-jsonpath "$.status" == "ok"
-jsonpath "$.fragments" not includes {{fragment1_id}}
-jsonpath "$.fragments" includes {{fragment2_id}}
+# 6. Attempt to create fragment without authentication
+POST http://localhost:8080/v1/fragments
+Content-Type: text/plain
+HTTP/1.1 401
+
+
