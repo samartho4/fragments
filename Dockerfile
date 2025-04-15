@@ -53,6 +53,7 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 RUN chown -R appuser:nodejs /app
 
 # Switch to non-root user
+# hadolint ignore=DL3002
 USER root
 
 # Expose application port
