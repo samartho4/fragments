@@ -28,6 +28,9 @@ const rawBody = () =>
     });
 router.post('/fragments', rawBody(), require('./post'));
 
+// Define route for PUT /v1/fragments/:id - use the same raw body parser
+router.put('/fragments/:id', rawBody(), require('./put'));
+
 // IMPORTANT - Order matters for route definitions!
 // Routes with more specific patterns must come before less specific ones
 
