@@ -69,6 +69,24 @@ jobs:
 
       - name: Install node dependencies and run Tests
         run: npm ci && npm test
+        
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start containers
+        run: docker-compose up -d dynamodb-local localstack
+      - name: Setup AWS resources
+        run: |
+          chmod +x ./scripts/local-aws-setup.sh
+          ./scripts/local-aws-setup.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:integration      
 
   docker-hub:
     name: Build and Push to Docker Hub
