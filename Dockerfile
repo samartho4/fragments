@@ -53,11 +53,12 @@ COPY ./tests/.htpasswd ./tests/.htpasswd
 RUN chown -R appuser:nodejs /app
 
 # Switch to non-root user
-USER appuser
+USER root
 
 # Expose application port
-EXPOSE 8080
-ENV PORT=8080
+ARG PORT=8080
+ENV PORT=$PORT
+EXPOSE $PORT
 
 # Healthcheck using curl
 HEALTHCHECK --interval=30s --timeout=10s CMD curl -f http://localhost:8080/ || exit 1
