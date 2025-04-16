@@ -1,6 +1,7 @@
 // src/converter.js
 
 const logger = require('./logger');
+const sharp = require('sharp');
 
 /**
  * Convert a fragment's data from one format to another
@@ -10,6 +11,11 @@ const logger = require('./logger');
  * @returns {Promise<Buffer>} - the converted data
  */
 async function convert(data, sourceType, targetType) {
+  // Add validation for parameters
+  if (!data || !sourceType || !targetType) {
+    throw new Error('Missing required parameters: data, sourceType, and targetType are all required');
+  }
+  
   // If the source and target types are the same, return the data as is
   if (sourceType === targetType) {
     return data;
@@ -42,7 +48,7 @@ async function convert(data, sourceType, targetType) {
     return await convertImage(data, sourceType, targetType);
   }
 
-  // If we don't know how to convert this, throw an error
+  // If we reach here, the conversion is not supported
   throw new Error(`Unsupported conversion from ${sourceType} to ${targetType}`);
 }
 
@@ -78,55 +84,38 @@ function convertMarkdownToHtml(data) {
 
 /**
  * Convert image from one format to another
- * @param {Buffer} data - the image data
- * @param {string} sourceType - source MIME type
- * @param {string} targetType - target MIME type
- * @returns {Promise<Buffer>} - converted image data
+ * @param {Buffer} data - the image data as a Buffer
+ * @param {string} sourceType - the source image MIME type
+ * @param {string} targetType - the target image MIME type
+ * @returns {Promise<Buffer>} - converted image as a Buffer
  */
 async function convertImage(data, sourceType, targetType) {
   try {
     logger.debug(`Converting image from ${sourceType} to ${targetType}`);
     
-    // Make sure we have a Buffer
-    if (!Buffer.isBuffer(data)) {
-      logger.debug('Image data is not a Buffer, converting');
-      data = Buffer.from(data);
-    }
-    
-    logger.debug(`Image data size: ${data.length} bytes`);
-    
-    // Use sharp to convert the image
-    const sharp = require('sharp');
     const image = sharp(data);
     
-    // Get the target format from the MIME type
+    // Extract the image format from the MIME type (e.g., 'image/png' -> 'png')
     const targetFormat = targetType.split('/')[1];
+    
     logger.debug(`Target format: ${targetFormat}`);
     
-    let result;
-    
+    // Convert to the target format
     switch (targetFormat) {
       case 'jpeg':
-        result = await image.jpeg().toBuffer();
-        break;
+        return await image.jpeg().toBuffer();
       case 'png':
-        result = await image.png().toBuffer();
-        break;
+        return await image.png().toBuffer();
       case 'webp':
-        result = await image.webp().toBuffer();
-        break;
+        return await image.webp().toBuffer();
       case 'gif':
-        result = await image.gif().toBuffer();
-        break;
+        return await image.gif().toBuffer();
       default:
         throw new Error(`Unsupported image format: ${targetFormat}`);
     }
-    
-    logger.debug(`Conversion successful, output size: ${result.length} bytes`);
-    return result;
   } catch (err) {
-    logger.error({ err }, 'Error converting image');
-    throw new Error(`Error converting image: ${err.message}`);
+    logger.error({ err }, 'Image conversion error');
+    throw err;
   }
 }
 
