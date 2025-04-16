@@ -2,6 +2,8 @@ const MarkdownIt = require('markdown-it');
 const csvtojson = require('csvtojson');
 const yaml = require('js-yaml');
 
+const sharp = require('sharp');
+
 // Handle all the type conversions
 module.exports.handleTypeConversion = async ({ currentType, finalType, fragmentData }) => {
   switch (finalType) {
@@ -13,12 +15,12 @@ module.exports.handleTypeConversion = async ({ currentType, finalType, fragmentD
       return await convertToJson(currentType, fragmentData);
     case 'application/yaml':
       return await convertToYaml(currentType, fragmentData);
-    /*case 'image/jpeg':
+    case 'image/jpeg':
     case 'image/png':
     case 'image/webp':
     case 'image/gif':
     case 'image/avif':
-      return await convertToImage(currentType, finalType, fragmentData);*/
+      return await convertToImage(currentType, finalType, fragmentData);
     default:
       throw new Error(
         `Type conversion from ${currentType} to ${finalType} is currently not supported by the API.`
@@ -69,7 +71,7 @@ const convertToYaml = async (currentType, fragmentData) => {
       throw new Error(`Type conversion from ${currentType} to application/yaml is not supported.`);
   }
 };
-/*
+
 const convertToImage = async (currentType, finalType, fragmentData) => {
   const image = sharp(fragmentData);
   switch (finalType) {
@@ -86,4 +88,4 @@ const convertToImage = async (currentType, finalType, fragmentData) => {
     default:
       throw new Error(`Type conversion from ${currentType} to ${finalType} is not supported.`);
   }
-};*/
+};

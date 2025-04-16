@@ -1,3 +1,5 @@
+// src/utils/typeValidation.js
+
 const logger = require('../logger');
 const yaml = require('js-yaml');
 
@@ -16,11 +18,13 @@ module.exports.validateFragment = async (fragmentData, fragmentType) => {
       break;
 
     case 'text/plain':
+    case 'text/markdown':
+    case 'text/html':
       // Ensure the data is a valid text
       validateText(fragmentData);
       break;
 
-    /*case 'image/jpeg':
+    case 'image/jpeg':
     case 'image/png':
     case 'image/webp':
     case 'image/avif':
@@ -28,7 +32,7 @@ module.exports.validateFragment = async (fragmentData, fragmentType) => {
       // Throw an Error if the program is unable to parse the image
       await validateImage(fragmentData, fragmentType);
       break;
-    }*/
+    }
   }
 };
 
@@ -50,9 +54,6 @@ const validateYaml = (fragmentData) => {
   }
 };
 
-
-// changed this only 
-
 function validateText(fragmentData) {
   logger.debug('Validating text data');
   if (!Buffer.isBuffer(fragmentData)) {
@@ -62,11 +63,10 @@ function validateText(fragmentData) {
   return true;
 }
 
-
-
-/*const validateImage = async (fragmentData, expectedType) => {
+const validateImage = async (fragmentData, expectedType) => {
   try {
     // Use sharp to get metadata about the image
+    const sharp = require('sharp');
     const metadata = await sharp(fragmentData).metadata();
 
     const expectedFormat = expectedType.split('/')[1];
@@ -88,4 +88,5 @@ function validateText(fragmentData) {
   } catch (error) {
     logger.error(`Invalid image data, ${error.message}`);
     throw new Error(`Invalid image data, ${error.message}`);
-  }*/
+  }
+};
