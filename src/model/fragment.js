@@ -91,19 +91,19 @@ class Fragment {
   }
 
   /**
-   * Gets the fragment's data from the database
-   * @returns Promise<Buffer>
-   */
-  async getData() {
-    const data = await readFragmentData(this.ownerId, this.id);
+ * Gets the fragment's data from the database
+ * @returns Promise<Buffer>
+ */
+async getData() {
+  const data = await readFragmentData(this.ownerId, this.id);
 
-    if (!data) {
-      throw new Error('Fragment data not found');
-    }
-
-    return data;
+  if (!data) {
+    throw new Error('Fragment data not found');
   }
 
+  // Make sure we're returning a Buffer
+  return Buffer.isBuffer(data) ? data : Buffer.from(data);
+}
   /**
    * Set's the fragment's data in the database
    * @param {Buffer} data
@@ -144,16 +144,15 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    // Define which source types can be converted to which target types
     const supportedFormats = {
       'text/plain': ['text/plain', 'text/html'],
       'text/markdown': ['text/plain', 'text/markdown', 'text/html'],
       'text/html': ['text/plain', 'text/html'],
       'application/json': ['application/json', 'text/plain'],
-      /*'image/png': ['image/png'],
-      'image/jpeg': ['image/jpeg'],
-      'image/webp': ['image/webp'],
-      'image/gif': ['image/gif'],*/
+      'image/png': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+      'image/jpeg': ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+      'image/webp': ['image/webp', 'image/png', 'image/jpeg', 'image/gif'],
+      'image/gif': ['image/gif', 'image/png', 'image/jpeg', 'image/webp']
     };
   
     // Return the supported formats for this fragment's mime type
