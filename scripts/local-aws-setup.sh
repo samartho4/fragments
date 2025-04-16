@@ -24,7 +24,30 @@ until (curl --silent http://localhost:4566/_localstack/health | grep "\"s3\": \"
     sleep 5
 done
 echo 'LocalStack S3 Ready'
+# -----------------------------------------------------------------------------
+# 1) S3 Bucket: delete if exists, then create
+# -----------------------------------------------------------------------------
+BUCKET=fragments
+echo "Checking for existing S3 bucket: $BUCKET"
+if aws --endpoint-url=http://localhost:4566 s3api head-bucket --bucket "$BUCKET" 2>/dev/null; then
+  echo "Bucket $BUCKET exists—deleting all objects and bucket..."
+  # Remove all objects (and versions) first
+  aws --endpoint-url=http://localhost:4566 s3api list-object-versions \
+    --bucket "$BUCKET" \
+    --output=json | \
+    jq -r '.Versions[],.DeleteMarkers[] | {Key:.Key,VersionId:.VersionId} | @base64' \
+      | while read b64; do
+          entry="$(echo "$b64" | base64 --decode)"
+          key="$(echo "$entry" | jq -r .Key)"
+          vid="$(echo "$entry" | jq -r .VersionId)"
+          aws --endpoint-url=http://localhost:4566 s3api delete-object \
+            --bucket "$BUCKET" --key "$key" --version-id "$vid"
+        done
 
+  # Now delete the bucket
+  aws --endpoint-url=http://localhost:4566 s3api delete-bucket --bucket "$BUCKET"
+  echo "Deleted bucket $BUCKET"
+fi
 # Create our S3 bucket with LocalStack
 echo "Creating LocalStack S3 bucket: fragments"
 aws --endpoint-url=http://localhost:4566 s3api create-bucket --bucket fragments
