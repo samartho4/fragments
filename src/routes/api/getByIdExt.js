@@ -37,7 +37,8 @@ module.exports = async (req, res) => {
 
     // Convert the data to the requested type
     try {
-      const convertedData = convert(data, fragment.mimeType, targetType);
+      // Make sure we're properly awaiting the conversion
+      const convertedData = await convert(data, fragment.mimeType, targetType);
       
       // Return the converted data with appropriate Content-Type
       res.set('Content-Type', targetType);
@@ -66,7 +67,6 @@ module.exports = async (req, res) => {
  * @param {string} ext - file extension (e.g., 'txt', 'html', 'md')
  * @returns {string} corresponding Content-Type
  */
-
 function extToContentType(ext) {
   const extMap = {
     'txt': 'text/plain',
@@ -74,7 +74,11 @@ function extToContentType(ext) {
     'html': 'text/html',
     'md': 'text/markdown',
     'json': 'application/json',
-    // Can add more mappings as needed
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'webp': 'image/webp',
+    'gif': 'image/gif'
   };
   
   return extMap[ext.toLowerCase()] || `application/${ext}`;

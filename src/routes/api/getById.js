@@ -31,14 +31,6 @@ module.exports = async (req, res) => {
       .json(createErrorResponse(404, 'Fragment not found'));
   }
 
-  // We only want to support plain text for now
-  if (!fragment.type.startsWith('text/plain')) {
-    logger.warn(`Fragment type ${fragment.type} is not supported for plain text retrieval`);
-    return res
-      .status(415)
-      .json(createErrorResponse(415, 'Only text/plain fragments can be retrieved at this time'));
-  }
-
   // Retrieve the raw data from storage
 let data;
   try {
