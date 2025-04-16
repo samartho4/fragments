@@ -121,6 +121,6 @@
     },
     "registeredAt": "2025-04-15T01:02:26.290Z",
     "registeredBy": "arn:aws:sts::244568156156:assumed-role/voclabs/user3762052=Sharma,_Samarth",
-    "enableFaultInjection": false,
+    
     "tags": []
 }
