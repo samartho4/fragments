@@ -27,7 +27,11 @@ if (process.env.LOG_LEVEL === 'debug') {
 }
 
 // Use CORS middleware so we can make requests across origins
-app.use(cors());
+app.use(cors({
+  origin: '*', // For testing - restrict to specific domain in production
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Use gzip/deflate compression middleware
 app.use(compression());
