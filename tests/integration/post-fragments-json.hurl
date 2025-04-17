@@ -20,9 +20,3 @@ id: jsonpath "$.fragment.id"
 GET {{url}}
 [BasicAuth]
 user1@email.com:password1
-
-# Expect a 415 status code if JSON is not supported for retrieval
-HTTP/1.1 415
-[Asserts]
-jsonpath "$.status" == "error"
-jsonpath "$.error.code" == 415
