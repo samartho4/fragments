@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:244568156156:task-definition/fragments-task:4",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:244568156156:task-definition/fragments-task:6",
     "containerDefinitions": [
         {
             "name": "fragments-container",
-            "image": "samartho4/fragments:latest",
+            "image": "244568156156.dkr.ecr.us-east-1.amazonaws.com/fragments:0.10.7",
             "cpu": 256,
             "memoryReservation": 512,
             "portMappings": [
@@ -42,18 +42,20 @@
                     "value": "fragments"
                 },
                 {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                },
+                {
                     "name": "AWS_COGNITO_CLIENT_ID",
                     "value": "66htn01hugjn2bklkss53vsk0n"
                 },
                 {
                     "name": "LOG_LEVEL",
-                    "value": "debug"
+                    "value": "info"
                 }
             ],
-            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -63,8 +65,7 @@
                     "max-buffer-size": "25m",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
+                }
             },
             "systemControls": []
         }
@@ -73,7 +74,7 @@
     "taskRoleArn": "arn:aws:iam::244568156156:role/LabRole",
     "executionRoleArn": "arn:aws:iam::244568156156:role/LabRole",
     "networkMode": "awsvpc",
-    "revision": 4,
+    "revision": 6,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -82,6 +83,9 @@
         },
         {
             "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
@@ -94,6 +98,9 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
@@ -119,8 +126,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-04-15T01:02:26.290Z",
+    "registeredAt": "2025-04-16T22:20:43.664Z",
     "registeredBy": "arn:aws:sts::244568156156:assumed-role/voclabs/user3762052=Sharma,_Samarth",
-    
     "tags": []
 }
